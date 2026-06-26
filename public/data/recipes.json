@@ -2,20 +2,66 @@
   {
     "id": "sheet-pan-lemon-chicken",
     "title": "Sheet-Pan Lemon Herb Chicken",
-    "meal": ["dinner"],
+    "meal": [
+      "dinner"
+    ],
     "servings": 4,
-    "tags": ["gluten-free", "high-protein", "one-pan"],
+    "tags": [
+      "gluten-free",
+      "high-protein",
+      "one-pan"
+    ],
     "prepTime": 15,
     "cookTime": 35,
     "ingredients": [
-      { "item": "chicken thighs", "qty": 8, "unit": "", "aisle": "Meat & Seafood" },
-      { "item": "baby potatoes", "qty": 600, "unit": "g", "aisle": "Produce" },
-      { "item": "lemon", "qty": 2, "unit": "", "aisle": "Produce" },
-      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "garlic", "qty": 4, "unit": "clove", "aisle": "Produce" },
-      { "item": "dried oregano", "qty": 2, "unit": "tsp", "aisle": "Spices" },
-      { "item": "salt", "qty": 0, "unit": "", "aisle": "Spices" },
-      { "item": "black pepper", "qty": 0, "unit": "", "aisle": "Spices" }
+      {
+        "item": "chicken thighs",
+        "qty": 8,
+        "unit": "",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "baby potatoes",
+        "qty": 600,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "lemon",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "olive oil",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "garlic",
+        "qty": 4,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "dried oregano",
+        "qty": 2,
+        "unit": "tsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "salt",
+        "qty": 0,
+        "unit": "",
+        "aisle": "Spices"
+      },
+      {
+        "item": "black pepper",
+        "qty": 0,
+        "unit": "",
+        "aisle": "Spices"
+      }
     ],
     "steps": [
       "Heat oven to 220C / 425F.",
@@ -28,20 +74,68 @@
   {
     "id": "chickpea-coconut-curry",
     "title": "Chickpea Coconut Curry",
-    "meal": ["lunch", "dinner"],
+    "meal": [
+      "lunch",
+      "dinner"
+    ],
     "servings": 4,
-    "tags": ["vegan", "vegetarian", "gluten-free", "comfort"],
+    "tags": [
+      "vegan",
+      "vegetarian",
+      "gluten-free",
+      "comfort"
+    ],
     "prepTime": 10,
     "cookTime": 25,
     "ingredients": [
-      { "item": "chickpeas", "qty": 2, "unit": "can", "aisle": "Pantry" },
-      { "item": "coconut milk", "qty": 1, "unit": "can", "aisle": "Pantry" },
-      { "item": "onion", "qty": 1, "unit": "", "aisle": "Produce" },
-      { "item": "garlic", "qty": 3, "unit": "clove", "aisle": "Produce" },
-      { "item": "fresh ginger", "qty": 1, "unit": "tbsp", "aisle": "Produce" },
-      { "item": "curry powder", "qty": 2, "unit": "tbsp", "aisle": "Spices" },
-      { "item": "spinach", "qty": 150, "unit": "g", "aisle": "Produce" },
-      { "item": "basmati rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+      {
+        "item": "chickpeas",
+        "qty": 2,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "coconut milk",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "onion",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "garlic",
+        "qty": 3,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "fresh ginger",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Produce"
+      },
+      {
+        "item": "curry powder",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "spinach",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "basmati rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
     ],
     "steps": [
       "Cook rice per package.",
@@ -53,18 +147,54 @@
   {
     "id": "caprese-pasta-salad",
     "title": "Caprese Pasta Salad",
-    "meal": ["lunch"],
+    "meal": [
+      "lunch"
+    ],
     "servings": 4,
-    "tags": ["vegetarian", "quick", "no-cook-ish"],
+    "tags": [
+      "vegetarian",
+      "quick",
+      "no-cook-ish"
+    ],
     "prepTime": 15,
     "cookTime": 12,
     "ingredients": [
-      { "item": "fusilli pasta", "qty": 300, "unit": "g", "aisle": "Pantry" },
-      { "item": "cherry tomatoes", "qty": 250, "unit": "g", "aisle": "Produce" },
-      { "item": "fresh mozzarella", "qty": 200, "unit": "g", "aisle": "Dairy & Eggs" },
-      { "item": "fresh basil", "qty": 1, "unit": "bunch", "aisle": "Produce" },
-      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "balsamic vinegar", "qty": 2, "unit": "tbsp", "aisle": "Pantry" }
+      {
+        "item": "fusilli pasta",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "cherry tomatoes",
+        "qty": 250,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "fresh mozzarella",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "fresh basil",
+        "qty": 1,
+        "unit": "bunch",
+        "aisle": "Produce"
+      },
+      {
+        "item": "olive oil",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "balsamic vinegar",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      }
     ],
     "steps": [
       "Boil pasta until al dente, drain and cool under cold water.",
@@ -75,20 +205,65 @@
   {
     "id": "beef-veggie-stirfry",
     "title": "Quick Beef & Veggie Stir-Fry",
-    "meal": ["dinner"],
+    "meal": [
+      "dinner"
+    ],
     "servings": 4,
-    "tags": ["high-protein", "quick"],
+    "tags": [
+      "high-protein",
+      "quick"
+    ],
     "prepTime": 15,
     "cookTime": 12,
     "ingredients": [
-      { "item": "beef strips", "qty": 500, "unit": "g", "aisle": "Meat & Seafood" },
-      { "item": "broccoli", "qty": 1, "unit": "head", "aisle": "Produce" },
-      { "item": "bell pepper", "qty": 2, "unit": "", "aisle": "Produce" },
-      { "item": "carrot", "qty": 2, "unit": "", "aisle": "Produce" },
-      { "item": "soy sauce", "qty": 4, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "garlic", "qty": 3, "unit": "clove", "aisle": "Produce" },
-      { "item": "fresh ginger", "qty": 1, "unit": "tbsp", "aisle": "Produce" },
-      { "item": "jasmine rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+      {
+        "item": "beef strips",
+        "qty": 500,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "broccoli",
+        "qty": 1,
+        "unit": "head",
+        "aisle": "Produce"
+      },
+      {
+        "item": "bell pepper",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "carrot",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "soy sauce",
+        "qty": 4,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "garlic",
+        "qty": 3,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "fresh ginger",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Produce"
+      },
+      {
+        "item": "jasmine rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
     ],
     "steps": [
       "Cook rice. Slice all vegetables.",
@@ -100,20 +275,66 @@
   {
     "id": "mediterranean-grain-bowl",
     "title": "Mediterranean Grain Bowl",
-    "meal": ["lunch"],
+    "meal": [
+      "lunch"
+    ],
     "servings": 4,
-    "tags": ["vegetarian", "meal-prep", "high-fiber"],
+    "tags": [
+      "vegetarian",
+      "meal-prep",
+      "high-fiber"
+    ],
     "prepTime": 20,
     "cookTime": 20,
     "ingredients": [
-      { "item": "quinoa", "qty": 250, "unit": "g", "aisle": "Pantry" },
-      { "item": "cucumber", "qty": 1, "unit": "", "aisle": "Produce" },
-      { "item": "cherry tomatoes", "qty": 200, "unit": "g", "aisle": "Produce" },
-      { "item": "red onion", "qty": 0.5, "unit": "", "aisle": "Produce" },
-      { "item": "feta cheese", "qty": 150, "unit": "g", "aisle": "Dairy & Eggs" },
-      { "item": "chickpeas", "qty": 1, "unit": "can", "aisle": "Pantry" },
-      { "item": "lemon", "qty": 1, "unit": "", "aisle": "Produce" },
-      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" }
+      {
+        "item": "quinoa",
+        "qty": 250,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "cucumber",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "cherry tomatoes",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "red onion",
+        "qty": 0.5,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "feta cheese",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "chickpeas",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "lemon",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "olive oil",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      }
     ],
     "steps": [
       "Cook quinoa and cool.",
@@ -125,18 +346,54 @@
   {
     "id": "miso-salmon",
     "title": "Miso-Glazed Salmon",
-    "meal": ["dinner"],
+    "meal": [
+      "dinner"
+    ],
     "servings": 4,
-    "tags": ["high-protein", "gluten-free", "quick"],
+    "tags": [
+      "high-protein",
+      "gluten-free",
+      "quick"
+    ],
     "prepTime": 10,
     "cookTime": 15,
     "ingredients": [
-      { "item": "salmon fillet", "qty": 4, "unit": "", "aisle": "Meat & Seafood" },
-      { "item": "white miso paste", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "honey", "qty": 1, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "soy sauce", "qty": 1, "unit": "tbsp", "aisle": "Pantry" },
-      { "item": "green beans", "qty": 400, "unit": "g", "aisle": "Produce" },
-      { "item": "jasmine rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+      {
+        "item": "salmon fillet",
+        "qty": 4,
+        "unit": "",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "white miso paste",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "honey",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "soy sauce",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "green beans",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "jasmine rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
     ],
     "steps": [
       "Whisk miso, honey and soy. Brush over salmon.",
