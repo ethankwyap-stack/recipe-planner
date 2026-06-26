@@ -1,13 +1,13 @@
 /**
- * Turn an uploaded photo into something the OCR engine can reliably read:
- *  1. Decode it. The browser's native decoder handles JPG/PNG everywhere and HEIC
- *     on macOS/Safari — no library needed.
- *  2. If native decode fails (e.g. HEIC in Chrome), fall back to heic2any.
- *  3. Downscale to a sane size. Phone photos are often 12–24 MP, which blows past
- *     canvas limits and exhausts memory during OCR; shrinking fixes both and speeds
- *     recognition up dramatically. Text stays perfectly legible at this size.
+ * Image prep for the photo importer.
+ *  - Decodes with the browser's native engine (handles JPG/PNG everywhere and HEIC
+ *    on macOS/Safari), falling back to heic2any for HEIC where the browser can't.
+ *  - Produces a larger image for OCR and a smaller compressed JPEG data URL to store
+ *    on the recipe. Phone photos are 12–24 MP, which blows past canvas limits and
+ *    exhausts memory; downscaling fixes both and keeps stored recipes small.
  */
-const MAX_DIM = 2200
+const OCR_MAX = 2200 // px, long edge — good OCR accuracy without memory issues
+const STORE_MAX = 1100 // px, long edge — crisp enough to read back, small to store
 
 async function decode(blob: Blob): Promise<ImageBitmap | null> {
   try {
@@ -17,7 +17,22 @@ async function decode(blob: Blob): Promise<ImageBitmap | null> {
   }
 }
 
-function bitmapToScaledJpeg(bitmap: ImageBitmap, maxDim = MAX_DIM): Promise<Blob> {
+async function toBitmap(file: File): Promise<ImageBitmap> {
+  const native = await decode(file)
+  if (native) return native
+
+  const isHeic = /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)
+  if (isHeic) {
+    const heic2any = (await import('heic2any')).default
+    const out = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 })
+    const jpeg = Array.isArray(out) ? out[0] : out
+    const fromJpeg = await decode(jpeg)
+    if (fromJpeg) return fromJpeg
+  }
+  throw new Error('this image could not be opened')
+}
+
+function scaledCanvas(bitmap: ImageBitmap, maxDim: number): HTMLCanvasElement {
   const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height))
   const w = Math.max(1, Math.round(bitmap.width * scale))
   const h = Math.max(1, Math.round(bitmap.height * scale))
@@ -27,40 +42,44 @@ function bitmapToScaledJpeg(bitmap: ImageBitmap, maxDim = MAX_DIM): Promise<Blob
   const ctx = canvas.getContext('2d')
   if (!ctx) throw new Error('canvas not available')
   ctx.drawImage(bitmap, 0, 0, w, h)
-  bitmap.close?.()
-  return new Promise<Blob>((resolve, reject) =>
+  return canvas
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) =>
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error('image encode failed'))),
       'image/jpeg',
-      0.92,
+      quality,
     ),
   )
 }
 
-export async function toReadableImage(file: File): Promise<Blob> {
-  // 1. Try the browser's built-in decoder first (handles HEIC on macOS/Safari).
-  let bitmap = await decode(file)
+export interface PreparedPhoto {
+  /** Downscaled image to feed the OCR engine. */
+  ocrBlob: Blob
+  /** Compressed JPEG data URL to save on the recipe. */
+  storedDataUrl: string
+}
 
-  // 2. Fall back to converting HEIC/HEIF explicitly (e.g. Chrome can't decode it).
-  if (!bitmap) {
-    const isHeic = /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name)
-    if (isHeic) {
-      try {
-        const heic2any = (await import('heic2any')).default
-        const out = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 })
-        const jpeg = Array.isArray(out) ? out[0] : out
-        bitmap = await decode(jpeg)
-        if (!bitmap) return jpeg // hand the converted JPEG to OCR as a last resort
-      } catch (e) {
-        throw new Error(
-          `couldn't convert this HEIC photo${e instanceof Error ? ` (${e.message})` : ''}`,
-        )
-      }
-    } else {
-      return file // unknown format — let OCR attempt it directly
-    }
+/** Decode once, then make both an OCR image and a storable photo from the same frame. */
+export async function preparePhoto(file: File): Promise<PreparedPhoto> {
+  const bitmap = await toBitmap(file)
+  try {
+    const ocrBlob = await canvasToBlob(scaledCanvas(bitmap, OCR_MAX), 0.9)
+    const storedDataUrl = scaledCanvas(bitmap, STORE_MAX).toDataURL('image/jpeg', 0.7)
+    return { ocrBlob, storedDataUrl }
+  } finally {
+    bitmap.close?.()
   }
+}
 
-  // 3. Downscale for fast, memory-safe OCR.
-  return bitmapToScaledJpeg(bitmap)
+/** Storage-only: a downscaled JPEG data URL, for attaching a photo without OCR. */
+export async function fileToStoredPhoto(file: File): Promise<string> {
+  const bitmap = await toBitmap(file)
+  try {
+    return scaledCanvas(bitmap, STORE_MAX).toDataURL('image/jpeg', 0.7)
+  } finally {
+    bitmap.close?.()
+  }
 }

@@ -1,11 +1,22 @@
 import { useState } from 'react'
-import type { MealType, Recipe } from '../types'
+import type { Ingredient, MealType, Recipe } from '../types'
 import { recognizeImage, type OcrProgress } from '../lib/ocr'
-import { toReadableImage } from '../lib/image'
-import { parseRecipeText, uniqueId } from '../lib/parse'
-import { Button, Modal, inputClass } from './ui'
+import { preparePhoto } from '../lib/image'
+import { parseIngredientLine, uniqueId } from '../lib/parse'
+import { Button, Field, Modal, inputClass } from './ui'
 
-type Stage = 'pick' | 'scanning' | 'review'
+type SlotKey = 'ingredients' | 'instructions'
+
+interface SlotState {
+  dataUrl?: string
+  text: string
+  busy: boolean
+  progress: OcrProgress
+}
+
+const emptySlot = (): SlotState => ({ text: '', busy: false, progress: { status: '', progress: 0 } })
+
+const HEADING = /^(ingredients|steps|instructions|method|directions|you will need)\s*:?\s*$/i
 
 export function PhotoImportModal({
   open,
@@ -16,23 +27,22 @@ export function PhotoImportModal({
   open: boolean
   onClose: () => void
   existing: Recipe[]
-  /** Hands back a best-effort recipe for the user to review & save. */
   onParsed: (recipe: Recipe) => void
 }) {
-  const [stage, setStage] = useState<Stage>('pick')
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [progress, setProgress] = useState<OcrProgress>({ status: '', progress: 0 })
-  const [text, setText] = useState('')
+  const [title, setTitle] = useState('')
+  const [ingredients, setIngredients] = useState<SlotState>(emptySlot())
+  const [instructions, setInstructions] = useState<SlotState>(emptySlot())
   const [error, setError] = useState('')
 
+  const slots: Record<SlotKey, [SlotState, (s: SlotState) => void]> = {
+    ingredients: [ingredients, setIngredients],
+    instructions: [instructions, setInstructions],
+  }
+
   const reset = () => {
-    setStage('pick')
-    setImageUrl((url) => {
-      if (url) URL.revokeObjectURL(url)
-      return null
-    })
-    setProgress({ status: '', progress: 0 })
-    setText('')
+    setTitle('')
+    setIngredients(emptySlot())
+    setInstructions(emptySlot())
     setError('')
   }
 
@@ -41,142 +51,190 @@ export function PhotoImportModal({
     onClose()
   }
 
-  const onFile = async (file: File) => {
+  const onFile = async (key: SlotKey, file: File) => {
     setError('')
-    setStage('scanning')
-    setProgress({ status: 'preparing image', progress: 0 })
+    const [, set] = slots[key]
+    set({ ...emptySlot(), busy: true, progress: { status: 'preparing image', progress: 0 } })
     try {
-      // Convert HEIC/HEIF (iPhone/Mac photos) to JPEG so the browser & OCR can read it.
-      const img = await toReadableImage(file)
-      setImageUrl(URL.createObjectURL(img))
-      const out = await recognizeImage(img, setProgress)
-      setText(out.trim())
-      setStage('review')
+      const { ocrBlob, storedDataUrl } = await preparePhoto(file)
+      set({ ...emptySlot(), busy: true, dataUrl: storedDataUrl, progress: { status: 'reading text', progress: 0 } })
+      const text = await recognizeImage(ocrBlob, (p) =>
+        set({ ...emptySlot(), busy: true, dataUrl: storedDataUrl, progress: p }),
+      )
+      set({ dataUrl: storedDataUrl, text: cleanLines(text), busy: false, progress: { status: '', progress: 0 } })
     } catch (e) {
-      const msg =
-        e instanceof Error ? e.message : typeof e === 'string' ? e : JSON.stringify(e)
-      setError(`Could not read the photo — ${msg}. A JPG/PNG screenshot also works.`)
-      setStage('pick')
+      const msg = e instanceof Error ? e.message : typeof e === 'string' ? e : 'unknown error'
+      setError(`Couldn't read that photo — ${msg}. A JPG/PNG screenshot also works.`)
+      set(emptySlot())
     }
   }
 
-  const createRecipe = () => {
-    const parsed = parseRecipeText(text, existing)
-    let recipe = parsed[0]
-    if (!recipe) {
-      // OCR text wasn't structured enough to auto-split — keep everything in notes
-      // so nothing is lost, and let the user organise it in the form.
-      const firstLine = text.split('\n').find((l) => l.trim()) ?? 'Scanned recipe'
-      recipe = {
-        id: uniqueId(firstLine, existing),
-        title: firstLine.slice(0, 60),
-        meal: ['dinner'] as MealType[],
-        servings: 4,
-        ingredients: [],
-        steps: [],
-        tags: [],
-        notes: text,
-      }
+  const hasContent =
+    ingredients.text.trim() ||
+    instructions.text.trim() ||
+    ingredients.dataUrl ||
+    instructions.dataUrl
+
+  const create = () => {
+    const ings: Ingredient[] = ingredients.text
+      .split('\n')
+      .filter((l) => l.trim() && !HEADING.test(l))
+      .map(parseIngredientLine)
+      .filter((x): x is Ingredient => !!x)
+
+    const steps = instructions.text
+      .split('\n')
+      .map((l) => l.replace(/^[-*•\d.)\s]+/, '').trim())
+      .filter((l) => l && !HEADING.test(l))
+
+    const finalTitle =
+      title.trim() ||
+      ingredients.text.split('\n').find((l) => l.trim()) ||
+      'Scanned recipe'
+
+    const recipe: Recipe = {
+      id: uniqueId(finalTitle, existing),
+      title: finalTitle.slice(0, 80),
+      meal: ['dinner'] as MealType[],
+      servings: 4,
+      ingredients: ings,
+      steps,
+      tags: [],
+      ingredientsPhoto: ingredients.dataUrl,
+      instructionsPhoto: instructions.dataUrl,
     }
     onParsed(recipe)
     reset()
   }
 
-  const pct = Math.round(progress.progress * 100)
-
   return (
-    <Modal open={open} onClose={close} title="📷 Add a recipe from a photo" wide>
-      {stage === 'pick' && (
-        <div>
-          <p className="text-sm text-muted">
-            Snap a photo of a recipe card, cookbook page, or handwritten note. The text is read
-            right here in your browser — nothing is uploaded to any server, and it's free.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-neon px-4 py-2.5 text-sm font-semibold text-bg hover:brightness-110">
-              📷 Take photo
-              <input
-                type="file"
-                accept="image/*,.heic,.heif"
-                capture="environment"
-                className="hidden"
-                onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
-              />
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm hover:border-neon/60">
-              🖼 Choose an image
-              <input
-                type="file"
-                accept="image/*,.heic,.heif"
-                className="hidden"
-                onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
-              />
-            </label>
-          </div>
-          {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
-          <p className="mt-4 text-xs text-muted">
-            Tip: a flat, well-lit photo with clear printed text reads best. You'll get a chance to
-            fix anything before saving.
-          </p>
-        </div>
-      )}
+    <Modal open={open} onClose={close} title="📷 Add a recipe from photos" wide>
+      <p className="text-sm text-muted">
+        Take or pick a photo for the <strong className="text-text">ingredients</strong> and one for
+        the <strong className="text-text">instructions</strong>. The text is read in your browser
+        (free, nothing uploaded), and <strong className="text-text">both photos are saved on the
+        recipe</strong> so you can always look at the original.
+      </p>
 
-      {stage === 'scanning' && (
-        <div className="py-2">
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="recipe"
-              className="mx-auto mb-4 max-h-56 rounded-lg border border-border object-contain"
-            />
-          )}
-          <p className="text-sm capitalize text-muted">{progress.status || 'Preparing…'}</p>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-2">
-            <div
-              className="h-full bg-neon transition-all"
-              style={{ width: `${Math.max(5, pct)}%` }}
-            />
-          </div>
-          <p className="mt-1 text-xs text-muted">{pct}% — reading the text…</p>
-        </div>
-      )}
+      <Field label="Recipe name">
+        <input
+          className={inputClass}
+          placeholder="e.g. Strawberry Shortcakes"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Field>
 
-      {stage === 'review' && (
-        <div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {imageUrl && (
-              <img
-                src={imageUrl}
-                alt="recipe"
-                className="max-h-72 rounded-lg border border-border object-contain"
-              />
-            )}
-            <div>
-              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
-                Extracted text — fix anything OCR got wrong
-              </p>
-              <textarea
-                className={`${inputClass} min-h-[220px] font-mono text-xs`}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-              />
-            </div>
-          </div>
-          <p className="mt-2 text-xs text-muted">
-            Hint: putting an <code>Ingredients</code> line above the ingredients and a{' '}
-            <code>Steps</code> line above the method helps it split into the right fields. You can
-            also just tidy everything up in the next screen.
-          </p>
-          <div className="mt-4 flex justify-between gap-2 border-t border-border pt-4">
-            <Button variant="ghost" onClick={reset}>
-              ↺ Try another photo
-            </Button>
-            <Button variant="primary" disabled={!text.trim()} onClick={createRecipe}>
-              Create recipe →
-            </Button>
-          </div>
-        </div>
-      )}
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <PhotoSlot
+          label="📋 Ingredients photo"
+          slot={ingredients}
+          onFile={(f) => onFile('ingredients', f)}
+          onTextChange={(t) => setIngredients((s) => ({ ...s, text: t }))}
+          placeholder="One ingredient per line…"
+        />
+        <PhotoSlot
+          label="👩‍🍳 Instructions photo"
+          slot={instructions}
+          onFile={(f) => onFile('instructions', f)}
+          onTextChange={(t) => setInstructions((s) => ({ ...s, text: t }))}
+          placeholder="One step per line…"
+        />
+      </div>
+
+      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
+
+      <p className="mt-3 text-xs text-muted">
+        Tip: a flat, straight-on photo with good light reads best. You can fix the text in the next
+        screen — and the photos stay attached either way.
+      </p>
+
+      <div className="mt-4 flex justify-end gap-2 border-t border-border pt-4">
+        <Button variant="ghost" onClick={close}>
+          Cancel
+        </Button>
+        <Button variant="primary" disabled={!hasContent} onClick={create}>
+          Create recipe →
+        </Button>
+      </div>
     </Modal>
   )
+}
+
+function PhotoSlot({
+  label,
+  slot,
+  onFile,
+  onTextChange,
+  placeholder,
+}: {
+  label: string
+  slot: SlotState
+  onFile: (f: File) => void
+  onTextChange: (t: string) => void
+  placeholder: string
+}) {
+  const pct = Math.round(slot.progress.progress * 100)
+  return (
+    <div className="rounded-xl border border-border bg-surface-2 p-3">
+      <h4 className="mb-2 text-sm font-semibold text-neon">{label}</h4>
+
+      {slot.dataUrl ? (
+        <img
+          src={slot.dataUrl}
+          alt={label}
+          className="mb-2 max-h-44 w-full rounded-lg border border-border object-contain"
+        />
+      ) : null}
+
+      {slot.busy ? (
+        <div className="mb-2">
+          <p className="text-xs capitalize text-muted">{slot.progress.status || 'working…'}</p>
+          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-surface">
+            <div className="h-full bg-neon transition-all" style={{ width: `${Math.max(5, pct)}%` }} />
+          </div>
+        </div>
+      ) : (
+        <div className="mb-2 flex flex-wrap gap-2">
+          <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg bg-neon px-3 py-1.5 text-xs font-semibold text-bg hover:brightness-110">
+            📷 Take
+            <input
+              type="file"
+              accept="image/*,.heic,.heif"
+              capture="environment"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+            />
+          </label>
+          <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs hover:border-neon/60">
+            🖼 {slot.dataUrl ? 'Replace' : 'Choose'}
+            <input
+              type="file"
+              accept="image/*,.heic,.heif"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+            />
+          </label>
+        </div>
+      )}
+
+      {(slot.dataUrl || slot.text) && (
+        <textarea
+          className={`${inputClass} min-h-[120px] font-mono text-xs`}
+          placeholder={placeholder}
+          value={slot.text}
+          onChange={(e) => onTextChange(e.target.value)}
+        />
+      )}
+    </div>
+  )
+}
+
+function cleanLines(text: string): string {
+  return text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l, i, a) => l || (i > 0 && a[i - 1])) // collapse runs of blank lines
+    .join('\n')
+    .trim()
 }

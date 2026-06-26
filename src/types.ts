@@ -48,6 +48,10 @@ export interface Recipe {
   sourceUrl?: string
   image?: string
   notes?: string
+  /** Original photo of the ingredients list (compressed JPEG data URL). */
+  ingredientsPhoto?: string
+  /** Original photo of the instructions/method (compressed JPEG data URL). */
+  instructionsPhoto?: string
 }
 
 /** A single day's two planned slots. recipeId is null when empty. */

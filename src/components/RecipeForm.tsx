@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Aisle, Ingredient, MealType, Recipe } from '../types'
 import { AISLES } from '../types'
 import { guessAisle, uniqueId } from '../lib/parse'
+import { fileToStoredPhoto } from '../lib/image'
 import { Button, Field, inputClass } from './ui'
 
 const emptyIngredient = (): Ingredient => ({ item: '', qty: 0, unit: '', aisle: 'Other' })
@@ -29,6 +30,8 @@ export function RecipeForm({
     initial?.ingredients?.length ? initial.ingredients : [emptyIngredient()],
   )
   const [steps, setSteps] = useState<string[]>(initial?.steps?.length ? initial.steps : [''])
+  const [ingredientsPhoto, setIngredientsPhoto] = useState(initial?.ingredientsPhoto)
+  const [instructionsPhoto, setInstructionsPhoto] = useState(initial?.instructionsPhoto)
 
   const toggleMeal = (m: MealType) =>
     setMeal((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]))
@@ -59,6 +62,8 @@ export function RecipeForm({
       notes: notes.trim() || undefined,
       sourceUrl: sourceUrl.trim() || undefined,
       image: initial?.image,
+      ingredientsPhoto,
+      instructionsPhoto,
     }
     onSave(recipe)
   }
@@ -179,6 +184,11 @@ export function RecipeForm({
         >
           + Add ingredient
         </Button>
+        <PhotoAttach
+          label="ingredients"
+          photo={ingredientsPhoto}
+          onChange={setIngredientsPhoto}
+        />
       </div>
 
       {/* Steps editor */}
@@ -211,6 +221,11 @@ export function RecipeForm({
         <Button variant="ghost" className="mt-2" onClick={() => setSteps((cur) => [...cur, ''])}>
           + Add step
         </Button>
+        <PhotoAttach
+          label="instructions"
+          photo={instructionsPhoto}
+          onChange={setInstructionsPhoto}
+        />
       </div>
 
       <Field label="Notes">
@@ -236,6 +251,49 @@ export function RecipeForm({
           Save recipe
         </Button>
       </div>
+    </div>
+  )
+}
+
+function PhotoAttach({
+  label,
+  photo,
+  onChange,
+}: {
+  label: string
+  photo?: string
+  onChange: (dataUrl: string | undefined) => void
+}) {
+  const [busy, setBusy] = useState(false)
+  const handle = async (file: File) => {
+    setBusy(true)
+    try {
+      onChange(await fileToStoredPhoto(file))
+    } catch {
+      /* ignore — user can retry */
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <div className="mt-2 flex items-center gap-3">
+      {photo && (
+        <img src={photo} alt={`${label} photo`} className="h-14 w-14 rounded-lg border border-border object-cover" />
+      )}
+      <label className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted hover:text-neon">
+        {busy ? 'Attaching…' : photo ? `📷 Replace ${label} photo` : `📷 Attach ${label} photo`}
+        <input
+          type="file"
+          accept="image/*,.heic,.heif"
+          className="hidden"
+          onChange={(e) => e.target.files?.[0] && handle(e.target.files[0])}
+        />
+      </label>
+      {photo && (
+        <button type="button" onClick={() => onChange(undefined)} className="text-xs text-muted hover:text-red-300">
+          remove
+        </button>
+      )}
     </div>
   )
 }

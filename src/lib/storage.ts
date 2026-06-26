@@ -29,7 +29,12 @@ export async function loadRecipes(): Promise<{ recipes: Recipe[]; fromDraft: boo
 }
 
 export function saveDraft(recipes: Recipe[]): void {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(recipes))
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(recipes))
+  } catch {
+    // localStorage can fill up once recipes carry photos. The published recipes.json
+    // remains the source of truth, so a failed local draft is non-fatal.
+  }
 }
 
 /** Drop the local draft once changes are committed to the repo. */

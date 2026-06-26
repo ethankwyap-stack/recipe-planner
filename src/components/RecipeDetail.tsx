@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Recipe } from '../types'
 import { qtyLabel } from '../lib/units'
 import { Badge, Button } from './ui'
@@ -55,6 +56,7 @@ export function RecipeDetail({
               </li>
             ))}
           </ul>
+          <PhotoThumb src={recipe.ingredientsPhoto} caption="Original ingredients photo" />
         </div>
         <div>
           <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neon">Steps</h4>
@@ -68,6 +70,7 @@ export function RecipeDetail({
               </li>
             ))}
           </ol>
+          <PhotoThumb src={recipe.instructionsPhoto} caption="Original instructions photo" />
         </div>
       </div>
 
@@ -97,6 +100,31 @@ export function RecipeDetail({
               Delete
             </Button>
           )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PhotoThumb({ src, caption }: { src?: string; caption: string }) {
+  const [open, setOpen] = useState(false)
+  if (!src) return null
+  return (
+    <div className="mt-3">
+      <button onClick={() => setOpen(true)} className="block w-full" title="Tap to enlarge">
+        <img
+          src={src}
+          alt={caption}
+          className="max-h-48 w-full rounded-lg border border-border object-contain transition hover:border-neon/50"
+        />
+        <span className="mt-1 block text-xs text-muted">📷 {caption} — tap to enlarge</span>
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setOpen(false)}
+        >
+          <img src={src} alt={caption} className="max-h-[90vh] max-w-full rounded-lg" />
         </div>
       )}
     </div>
