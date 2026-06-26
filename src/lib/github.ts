@@ -10,18 +10,26 @@ export interface RepoConfig {
   autoPublish?: boolean // commit changes automatically (default true once token is set)
 }
 
-/** Best-effort guess of owner/repo from a GitHub Pages URL like
- *  https://user.github.io/repo/ — pre-fills setup so the user only pastes a token. */
+// The GitHub repo this site deploys from. Used to pre-fill publish setup on hosts
+// (like Vercel) whose URL doesn't reveal the repo. Change these if you fork the app.
+export const DEFAULT_OWNER = 'ethankwyap-stack'
+export const DEFAULT_REPO = 'recipe-planner'
+
+/** Pre-fill owner/repo for the publish form. Reads them from a GitHub Pages URL
+ *  (https://user.github.io/repo/) when possible, else falls back to the defaults
+ *  so it still works on Vercel/Netlify and the user only pastes a token. */
 export function guessRepoFromUrl(): { owner: string; repo: string } {
   try {
     const m = location.hostname.match(/^([^.]+)\.github\.io$/)
-    const owner = m ? m[1] : ''
-    const seg = location.pathname.split('/').filter(Boolean)[0] ?? ''
-    // On a project page the first path segment is the repo; on a user root page it isn't.
-    const repo = owner && seg && !location.hostname.startsWith(seg) ? seg : ''
-    return { owner, repo }
+    if (m) {
+      const owner = m[1]
+      const seg = location.pathname.split('/').filter(Boolean)[0] ?? ''
+      const repo = seg && !location.hostname.startsWith(seg) ? seg : DEFAULT_REPO
+      return { owner, repo }
+    }
+    return { owner: DEFAULT_OWNER, repo: DEFAULT_REPO }
   } catch {
-    return { owner: '', repo: '' }
+    return { owner: DEFAULT_OWNER, repo: DEFAULT_REPO }
   }
 }
 
