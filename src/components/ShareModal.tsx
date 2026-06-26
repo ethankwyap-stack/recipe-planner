@@ -26,7 +26,16 @@ export function ShareModal({
     // plan keeps all the text (ingredients, steps); only the optional images drop.
     const usedRecipes = recipes
       .filter((r) => usedIds.has(r.id))
-      .map(({ ingredientsPhoto: _i, instructionsPhoto: _s, image: _img, ...rest }) => rest)
+      .map(
+        ({
+          ingredientsPhotos: _ip,
+          instructionsPhotos: _sp,
+          ingredientsPhoto: _i,
+          instructionsPhoto: _s,
+          image: _img,
+          ...rest
+        }) => rest,
+      )
     const shared: SharedPlan = { v: 1, plan: week, recipes: usedRecipes, title: title.trim() || undefined }
     return buildShareUrl(shared)
   }, [week, recipes, title])

@@ -48,10 +48,20 @@ export interface Recipe {
   sourceUrl?: string
   image?: string
   notes?: string
-  /** Original photo of the ingredients list (compressed JPEG data URL). */
+  /** Original photos of the ingredients (compressed JPEG data URLs; multi-page ok). */
+  ingredientsPhotos?: string[]
+  /** Original photos of the instructions/method (multi-page ok). */
+  instructionsPhotos?: string[]
+  /** @deprecated legacy single-photo fields, still read for back-compat. */
   ingredientsPhoto?: string
-  /** Original photo of the instructions/method (compressed JPEG data URL). */
   instructionsPhoto?: string
+}
+
+/** Photos for a recipe section, tolerating both the new array and legacy single field. */
+export function recipePhotos(recipe: Recipe, kind: 'ingredients' | 'instructions'): string[] {
+  const arr = kind === 'ingredients' ? recipe.ingredientsPhotos : recipe.instructionsPhotos
+  const single = kind === 'ingredients' ? recipe.ingredientsPhoto : recipe.instructionsPhoto
+  return arr ?? (single ? [single] : [])
 }
 
 /** A single day's two planned slots. recipeId is null when empty. */

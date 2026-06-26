@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Recipe } from '../types'
+import { recipePhotos } from '../types'
 import { qtyLabel } from '../lib/units'
 import { Badge, Button } from './ui'
 import { FavStar } from './FavStar'
@@ -56,7 +57,7 @@ export function RecipeDetail({
               </li>
             ))}
           </ul>
-          <PhotoThumb src={recipe.ingredientsPhoto} caption="Original ingredients photo" />
+          <PhotoGallery photos={recipePhotos(recipe, 'ingredients')} caption="Original ingredients" />
         </div>
         <div>
           <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neon">Steps</h4>
@@ -70,7 +71,7 @@ export function RecipeDetail({
               </li>
             ))}
           </ol>
-          <PhotoThumb src={recipe.instructionsPhoto} caption="Original instructions photo" />
+          <PhotoGallery photos={recipePhotos(recipe, 'instructions')} caption="Original instructions" />
         </div>
       </div>
 
@@ -106,25 +107,36 @@ export function RecipeDetail({
   )
 }
 
-function PhotoThumb({ src, caption }: { src?: string; caption: string }) {
-  const [open, setOpen] = useState(false)
-  if (!src) return null
+function PhotoGallery({ photos, caption }: { photos: string[]; caption: string }) {
+  const [open, setOpen] = useState<string | null>(null)
+  if (photos.length === 0) return null
   return (
     <div className="mt-3">
-      <button onClick={() => setOpen(true)} className="block w-full" title="Tap to enlarge">
-        <img
-          src={src}
-          alt={caption}
-          className="max-h-48 w-full rounded-lg border border-border object-contain transition hover:border-neon/50"
-        />
-        <span className="mt-1 block text-xs text-muted">📷 {caption} — tap to enlarge</span>
-      </button>
+      <span className="mb-1 block text-xs text-muted">
+        📷 {caption} ({photos.length} {photos.length === 1 ? 'photo' : 'photos'}) — tap to enlarge
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {photos.map((src, i) => (
+          <button key={i} onClick={() => setOpen(src)} title="Tap to enlarge" className="relative">
+            <img
+              src={src}
+              alt={`${caption} ${i + 1}`}
+              className="h-24 w-24 rounded-lg border border-border object-cover transition hover:border-neon/50"
+            />
+            {photos.length > 1 && (
+              <span className="absolute bottom-0.5 left-0.5 rounded bg-black/60 px-1 text-[10px] text-white">
+                {i + 1}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
       {open && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setOpen(false)}
+          onClick={() => setOpen(null)}
         >
-          <img src={src} alt={caption} className="max-h-[90vh] max-w-full rounded-lg" />
+          <img src={open} alt={caption} className="max-h-[90vh] max-w-full rounded-lg" />
         </div>
       )}
     </div>

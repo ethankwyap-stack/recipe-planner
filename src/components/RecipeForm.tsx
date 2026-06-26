@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Aisle, Ingredient, MealType, Recipe } from '../types'
-import { AISLES } from '../types'
+import { AISLES, recipePhotos } from '../types'
 import { guessAisle, uniqueId } from '../lib/parse'
 import { fileToStoredPhoto } from '../lib/image'
 import { Button, Field, inputClass } from './ui'
@@ -30,8 +30,12 @@ export function RecipeForm({
     initial?.ingredients?.length ? initial.ingredients : [emptyIngredient()],
   )
   const [steps, setSteps] = useState<string[]>(initial?.steps?.length ? initial.steps : [''])
-  const [ingredientsPhoto, setIngredientsPhoto] = useState(initial?.ingredientsPhoto)
-  const [instructionsPhoto, setInstructionsPhoto] = useState(initial?.instructionsPhoto)
+  const [ingredientsPhotos, setIngredientsPhotos] = useState<string[]>(
+    initial ? recipePhotos(initial, 'ingredients') : [],
+  )
+  const [instructionsPhotos, setInstructionsPhotos] = useState<string[]>(
+    initial ? recipePhotos(initial, 'instructions') : [],
+  )
 
   const toggleMeal = (m: MealType) =>
     setMeal((cur) => (cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m]))
@@ -62,8 +66,11 @@ export function RecipeForm({
       notes: notes.trim() || undefined,
       sourceUrl: sourceUrl.trim() || undefined,
       image: initial?.image,
-      ingredientsPhoto,
-      instructionsPhoto,
+      ingredientsPhotos: ingredientsPhotos.length ? ingredientsPhotos : undefined,
+      instructionsPhotos: instructionsPhotos.length ? instructionsPhotos : undefined,
+      // clear any legacy single-photo fields now that we store arrays
+      ingredientsPhoto: undefined,
+      instructionsPhoto: undefined,
     }
     onSave(recipe)
   }
@@ -184,11 +191,7 @@ export function RecipeForm({
         >
           + Add ingredient
         </Button>
-        <PhotoAttach
-          label="ingredients"
-          photo={ingredientsPhoto}
-          onChange={setIngredientsPhoto}
-        />
+        <PhotoAttach label="ingredients" photos={ingredientsPhotos} onChange={setIngredientsPhotos} />
       </div>
 
       {/* Steps editor */}
@@ -221,11 +224,7 @@ export function RecipeForm({
         <Button variant="ghost" className="mt-2" onClick={() => setSteps((cur) => [...cur, ''])}>
           + Add step
         </Button>
-        <PhotoAttach
-          label="instructions"
-          photo={instructionsPhoto}
-          onChange={setInstructionsPhoto}
-        />
+        <PhotoAttach label="instructions" photos={instructionsPhotos} onChange={setInstructionsPhotos} />
       </div>
 
       <Field label="Notes">
@@ -257,43 +256,56 @@ export function RecipeForm({
 
 function PhotoAttach({
   label,
-  photo,
+  photos,
   onChange,
 }: {
   label: string
-  photo?: string
-  onChange: (dataUrl: string | undefined) => void
+  photos: string[]
+  onChange: (photos: string[]) => void
 }) {
   const [busy, setBusy] = useState(false)
-  const handle = async (file: File) => {
+  const addFiles = async (files: FileList) => {
     setBusy(true)
-    try {
-      onChange(await fileToStoredPhoto(file))
-    } catch {
-      /* ignore — user can retry */
-    } finally {
-      setBusy(false)
+    const added: string[] = []
+    for (const file of Array.from(files)) {
+      try {
+        added.push(await fileToStoredPhoto(file))
+      } catch {
+        /* skip unreadable file */
+      }
     }
+    if (added.length) onChange([...photos, ...added])
+    setBusy(false)
   }
   return (
-    <div className="mt-2 flex items-center gap-3">
-      {photo && (
-        <img src={photo} alt={`${label} photo`} className="h-14 w-14 rounded-lg border border-border object-cover" />
+    <div className="mt-2">
+      {photos.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-2">
+          {photos.map((p, i) => (
+            <div key={i} className="relative">
+              <img src={p} alt={`${label} ${i + 1}`} className="h-14 w-14 rounded-lg border border-border object-cover" />
+              <button
+                type="button"
+                onClick={() => onChange(photos.filter((_, idx) => idx !== i))}
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-surface text-xs text-muted hover:text-red-300"
+                aria-label="Remove photo"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
       )}
       <label className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted hover:text-neon">
-        {busy ? 'Attaching…' : photo ? `📷 Replace ${label} photo` : `📷 Attach ${label} photo`}
+        {busy ? 'Attaching…' : `📷 Add ${label} photo${photos.length ? 's' : ''}`}
         <input
           type="file"
           accept="image/*,.heic,.heif"
+          multiple
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && handle(e.target.files[0])}
+          onChange={(e) => e.target.files?.length && addFiles(e.target.files)}
         />
       </label>
-      {photo && (
-        <button type="button" onClick={() => onChange(undefined)} className="text-xs text-muted hover:text-red-300">
-          remove
-        </button>
-      )}
     </div>
   )
 }

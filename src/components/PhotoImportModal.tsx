@@ -8,13 +8,13 @@ import { Button, Field, Modal, inputClass } from './ui'
 type SlotKey = 'ingredients' | 'instructions'
 
 interface SlotState {
-  dataUrl?: string
-  text: string
+  photos: string[] // stored data URLs, one per page
+  text: string // combined OCR text (editable)
   busy: boolean
   progress: OcrProgress
 }
 
-const emptySlot = (): SlotState => ({ text: '', busy: false, progress: { status: '', progress: 0 } })
+const emptySlot = (): SlotState => ({ photos: [], text: '', busy: false, progress: { status: '', progress: 0 } })
 
 const HEADING = /^(ingredients|steps|instructions|method|directions|you will need)\s*:?\s*$/i
 
@@ -34,9 +34,9 @@ export function PhotoImportModal({
   const [instructions, setInstructions] = useState<SlotState>(emptySlot())
   const [error, setError] = useState('')
 
-  const slots: Record<SlotKey, [SlotState, (s: SlotState) => void]> = {
-    ingredients: [ingredients, setIngredients],
-    instructions: [instructions, setInstructions],
+  const setters: Record<SlotKey, (fn: (s: SlotState) => SlotState) => void> = {
+    ingredients: setIngredients,
+    instructions: setInstructions,
   }
 
   const reset = () => {
@@ -45,35 +45,46 @@ export function PhotoImportModal({
     setInstructions(emptySlot())
     setError('')
   }
-
   const close = () => {
     reset()
     onClose()
   }
 
-  const onFile = async (key: SlotKey, file: File) => {
+  // Process one or more pages: each is downscaled, stored, OCR'd, and its text appended.
+  const addFiles = async (key: SlotKey, files: FileList) => {
     setError('')
-    const [, set] = slots[key]
-    set({ ...emptySlot(), busy: true, progress: { status: 'preparing image', progress: 0 } })
-    try {
-      const { ocrBlob, storedDataUrl } = await preparePhoto(file)
-      set({ ...emptySlot(), busy: true, dataUrl: storedDataUrl, progress: { status: 'reading text', progress: 0 } })
-      const text = await recognizeImage(ocrBlob, (p) =>
-        set({ ...emptySlot(), busy: true, dataUrl: storedDataUrl, progress: p }),
-      )
-      set({ dataUrl: storedDataUrl, text: cleanLines(text), busy: false, progress: { status: '', progress: 0 } })
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : typeof e === 'string' ? e : 'unknown error'
-      setError(`Couldn't read that photo — ${msg}. A JPG/PNG screenshot also works.`)
-      set(emptySlot())
+    const set = setters[key]
+    const list = Array.from(files)
+    for (const file of list) {
+      set((s) => ({ ...s, busy: true, progress: { status: 'preparing image', progress: 0 } }))
+      try {
+        const { ocrBlob, storedDataUrl } = await preparePhoto(file)
+        set((s) => ({ ...s, photos: [...s.photos, storedDataUrl] }))
+        const text = await recognizeImage(ocrBlob, (p) =>
+          set((s) => ({ ...s, busy: true, progress: p })),
+        )
+        set((s) => ({
+          ...s,
+          text: [s.text.trim(), cleanLines(text)].filter(Boolean).join('\n'),
+          busy: false,
+          progress: { status: '', progress: 0 },
+        }))
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : typeof e === 'string' ? e : 'unknown error'
+        setError(`Couldn't read one photo — ${msg}. A JPG/PNG screenshot also works.`)
+        set((s) => ({ ...s, busy: false, progress: { status: '', progress: 0 } }))
+      }
     }
   }
+
+  const removePhoto = (key: SlotKey, idx: number) =>
+    setters[key]((s) => ({ ...s, photos: s.photos.filter((_, i) => i !== idx) }))
 
   const hasContent =
     ingredients.text.trim() ||
     instructions.text.trim() ||
-    ingredients.dataUrl ||
-    instructions.dataUrl
+    ingredients.photos.length ||
+    instructions.photos.length
 
   const create = () => {
     const ings: Ingredient[] = ingredients.text
@@ -88,9 +99,7 @@ export function PhotoImportModal({
       .filter((l) => l && !HEADING.test(l))
 
     const finalTitle =
-      title.trim() ||
-      ingredients.text.split('\n').find((l) => l.trim()) ||
-      'Scanned recipe'
+      title.trim() || ingredients.text.split('\n').find((l) => l.trim()) || 'Scanned recipe'
 
     const recipe: Recipe = {
       id: uniqueId(finalTitle, existing),
@@ -100,8 +109,8 @@ export function PhotoImportModal({
       ingredients: ings,
       steps,
       tags: [],
-      ingredientsPhoto: ingredients.dataUrl,
-      instructionsPhoto: instructions.dataUrl,
+      ingredientsPhotos: ingredients.photos.length ? ingredients.photos : undefined,
+      instructionsPhotos: instructions.photos.length ? instructions.photos : undefined,
     }
     onParsed(recipe)
     reset()
@@ -110,10 +119,10 @@ export function PhotoImportModal({
   return (
     <Modal open={open} onClose={close} title="📷 Add a recipe from photos" wide>
       <p className="text-sm text-muted">
-        Take or pick a photo for the <strong className="text-text">ingredients</strong> and one for
-        the <strong className="text-text">instructions</strong>. The text is read in your browser
-        (free, nothing uploaded), and <strong className="text-text">both photos are saved on the
-        recipe</strong> so you can always look at the original.
+        Add one or more photos for the <strong className="text-text">ingredients</strong> and the{' '}
+        <strong className="text-text">instructions</strong> — multi-page recipes are fine, just add
+        each page. Text is read in your browser (free), and{' '}
+        <strong className="text-text">every photo is saved on the recipe</strong>.
       </p>
 
       <Field label="Recipe name">
@@ -127,16 +136,18 @@ export function PhotoImportModal({
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <PhotoSlot
-          label="📋 Ingredients photo"
+          label="📋 Ingredients photos"
           slot={ingredients}
-          onFile={(f) => onFile('ingredients', f)}
+          onFiles={(f) => addFiles('ingredients', f)}
+          onRemove={(i) => removePhoto('ingredients', i)}
           onTextChange={(t) => setIngredients((s) => ({ ...s, text: t }))}
           placeholder="One ingredient per line…"
         />
         <PhotoSlot
-          label="👩‍🍳 Instructions photo"
+          label="👩‍🍳 Instructions photos"
           slot={instructions}
-          onFile={(f) => onFile('instructions', f)}
+          onFiles={(f) => addFiles('instructions', f)}
+          onRemove={(i) => removePhoto('instructions', i)}
           onTextChange={(t) => setInstructions((s) => ({ ...s, text: t }))}
           placeholder="One step per line…"
         />
@@ -145,8 +156,8 @@ export function PhotoImportModal({
       {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
 
       <p className="mt-3 text-xs text-muted">
-        Tip: a flat, straight-on photo with good light reads best. You can fix the text in the next
-        screen — and the photos stay attached either way.
+        Tip: a flat, straight-on photo with good light reads best. You can fix the text next — the
+        photos stay attached either way.
       </p>
 
       <div className="mt-4 flex justify-end gap-2 border-t border-border pt-4">
@@ -164,13 +175,15 @@ export function PhotoImportModal({
 function PhotoSlot({
   label,
   slot,
-  onFile,
+  onFiles,
+  onRemove,
   onTextChange,
   placeholder,
 }: {
   label: string
   slot: SlotState
-  onFile: (f: File) => void
+  onFiles: (files: FileList) => void
+  onRemove: (idx: number) => void
   onTextChange: (t: string) => void
   placeholder: string
 }) {
@@ -179,13 +192,25 @@ function PhotoSlot({
     <div className="rounded-xl border border-border bg-surface-2 p-3">
       <h4 className="mb-2 text-sm font-semibold text-neon">{label}</h4>
 
-      {slot.dataUrl ? (
-        <img
-          src={slot.dataUrl}
-          alt={label}
-          className="mb-2 max-h-44 w-full rounded-lg border border-border object-contain"
-        />
-      ) : null}
+      {slot.photos.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-2">
+          {slot.photos.map((p, i) => (
+            <div key={i} className="relative">
+              <img src={p} alt={`page ${i + 1}`} className="h-16 w-16 rounded-lg border border-border object-cover" />
+              <button
+                onClick={() => onRemove(i)}
+                className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-surface text-xs text-muted hover:text-red-300"
+                aria-label="Remove page"
+              >
+                ✕
+              </button>
+              <span className="absolute bottom-0.5 left-0.5 rounded bg-black/60 px-1 text-[10px] text-white">
+                {i + 1}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {slot.busy ? (
         <div className="mb-2">
@@ -203,22 +228,23 @@ function PhotoSlot({
               accept="image/*,.heic,.heif"
               capture="environment"
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+              onChange={(e) => e.target.files?.length && onFiles(e.target.files)}
             />
           </label>
           <label className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs hover:border-neon/60">
-            🖼 {slot.dataUrl ? 'Replace' : 'Choose'}
+            🖼 Add page(s)
             <input
               type="file"
               accept="image/*,.heic,.heif"
+              multiple
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+              onChange={(e) => e.target.files?.length && onFiles(e.target.files)}
             />
           </label>
         </div>
       )}
 
-      {(slot.dataUrl || slot.text) && (
+      {(slot.photos.length > 0 || slot.text) && (
         <textarea
           className={`${inputClass} min-h-[120px] font-mono text-xs`}
           placeholder={placeholder}
@@ -234,7 +260,7 @@ function cleanLines(text: string): string {
   return text
     .split('\n')
     .map((l) => l.trim())
-    .filter((l, i, a) => l || (i > 0 && a[i - 1])) // collapse runs of blank lines
+    .filter((l, i, a) => l || (i > 0 && a[i - 1]))
     .join('\n')
     .trim()
 }
