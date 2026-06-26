@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { MealType, Recipe } from '../types'
 import { recognizeImage, type OcrProgress } from '../lib/ocr'
+import { toReadableImage } from '../lib/image'
 import { parseRecipeText, uniqueId } from '../lib/parse'
 import { Button, Modal, inputClass } from './ui'
 
@@ -42,14 +43,21 @@ export function PhotoImportModal({
 
   const onFile = async (file: File) => {
     setError('')
-    setImageUrl(URL.createObjectURL(file))
     setStage('scanning')
+    setProgress({ status: 'preparing image', progress: 0 })
     try {
-      const out = await recognizeImage(file, setProgress)
+      // Convert HEIC/HEIF (iPhone/Mac photos) to JPEG so the browser & OCR can read it.
+      const img = await toReadableImage(file)
+      setImageUrl(URL.createObjectURL(img))
+      const out = await recognizeImage(img, setProgress)
       setText(out.trim())
       setStage('review')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not read the photo.')
+      setError(
+        e instanceof Error
+          ? `Could not read the photo (${e.message}). Try a JPG or PNG.`
+          : 'Could not read the photo.',
+      )
       setStage('pick')
     }
   }
@@ -91,7 +99,7 @@ export function PhotoImportModal({
               📷 Take photo
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 capture="environment"
                 className="hidden"
                 onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
@@ -101,7 +109,7 @@ export function PhotoImportModal({
               🖼 Choose an image
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 className="hidden"
                 onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
               />
