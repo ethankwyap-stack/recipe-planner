@@ -53,11 +53,9 @@ export function PhotoImportModal({
       setText(out.trim())
       setStage('review')
     } catch (e) {
-      setError(
-        e instanceof Error
-          ? `Could not read the photo (${e.message}). Try a JPG or PNG.`
-          : 'Could not read the photo.',
-      )
+      const msg =
+        e instanceof Error ? e.message : typeof e === 'string' ? e : JSON.stringify(e)
+      setError(`Could not read the photo — ${msg}. A JPG/PNG screenshot also works.`)
       setStage('pick')
     }
   }
