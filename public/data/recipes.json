@@ -1,0 +1,147 @@
+[
+  {
+    "id": "sheet-pan-lemon-chicken",
+    "title": "Sheet-Pan Lemon Herb Chicken",
+    "meal": ["dinner"],
+    "servings": 4,
+    "tags": ["gluten-free", "high-protein", "one-pan"],
+    "prepTime": 15,
+    "cookTime": 35,
+    "ingredients": [
+      { "item": "chicken thighs", "qty": 8, "unit": "", "aisle": "Meat & Seafood" },
+      { "item": "baby potatoes", "qty": 600, "unit": "g", "aisle": "Produce" },
+      { "item": "lemon", "qty": 2, "unit": "", "aisle": "Produce" },
+      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "garlic", "qty": 4, "unit": "clove", "aisle": "Produce" },
+      { "item": "dried oregano", "qty": 2, "unit": "tsp", "aisle": "Spices" },
+      { "item": "salt", "qty": 0, "unit": "", "aisle": "Spices" },
+      { "item": "black pepper", "qty": 0, "unit": "", "aisle": "Spices" }
+    ],
+    "steps": [
+      "Heat oven to 220C / 425F.",
+      "Toss potatoes, halved lemon wedges, garlic, oil, oregano, salt and pepper on a sheet pan.",
+      "Nestle in the chicken thighs skin-side up and season.",
+      "Roast 35 minutes until chicken is 75C and potatoes are golden."
+    ],
+    "notes": "Great with a simple green salad."
+  },
+  {
+    "id": "chickpea-coconut-curry",
+    "title": "Chickpea Coconut Curry",
+    "meal": ["lunch", "dinner"],
+    "servings": 4,
+    "tags": ["vegan", "vegetarian", "gluten-free", "comfort"],
+    "prepTime": 10,
+    "cookTime": 25,
+    "ingredients": [
+      { "item": "chickpeas", "qty": 2, "unit": "can", "aisle": "Pantry" },
+      { "item": "coconut milk", "qty": 1, "unit": "can", "aisle": "Pantry" },
+      { "item": "onion", "qty": 1, "unit": "", "aisle": "Produce" },
+      { "item": "garlic", "qty": 3, "unit": "clove", "aisle": "Produce" },
+      { "item": "fresh ginger", "qty": 1, "unit": "tbsp", "aisle": "Produce" },
+      { "item": "curry powder", "qty": 2, "unit": "tbsp", "aisle": "Spices" },
+      { "item": "spinach", "qty": 150, "unit": "g", "aisle": "Produce" },
+      { "item": "basmati rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+    ],
+    "steps": [
+      "Cook rice per package.",
+      "Soften onion, garlic and ginger in oil 5 minutes.",
+      "Add curry powder, stir 1 minute, then chickpeas and coconut milk.",
+      "Simmer 15 minutes, wilt in spinach, season and serve over rice."
+    ]
+  },
+  {
+    "id": "caprese-pasta-salad",
+    "title": "Caprese Pasta Salad",
+    "meal": ["lunch"],
+    "servings": 4,
+    "tags": ["vegetarian", "quick", "no-cook-ish"],
+    "prepTime": 15,
+    "cookTime": 12,
+    "ingredients": [
+      { "item": "fusilli pasta", "qty": 300, "unit": "g", "aisle": "Pantry" },
+      { "item": "cherry tomatoes", "qty": 250, "unit": "g", "aisle": "Produce" },
+      { "item": "fresh mozzarella", "qty": 200, "unit": "g", "aisle": "Dairy & Eggs" },
+      { "item": "fresh basil", "qty": 1, "unit": "bunch", "aisle": "Produce" },
+      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "balsamic vinegar", "qty": 2, "unit": "tbsp", "aisle": "Pantry" }
+    ],
+    "steps": [
+      "Boil pasta until al dente, drain and cool under cold water.",
+      "Halve tomatoes and mozzarella, tear basil.",
+      "Toss everything with oil, balsamic, salt and pepper."
+    ]
+  },
+  {
+    "id": "beef-veggie-stirfry",
+    "title": "Quick Beef & Veggie Stir-Fry",
+    "meal": ["dinner"],
+    "servings": 4,
+    "tags": ["high-protein", "quick"],
+    "prepTime": 15,
+    "cookTime": 12,
+    "ingredients": [
+      { "item": "beef strips", "qty": 500, "unit": "g", "aisle": "Meat & Seafood" },
+      { "item": "broccoli", "qty": 1, "unit": "head", "aisle": "Produce" },
+      { "item": "bell pepper", "qty": 2, "unit": "", "aisle": "Produce" },
+      { "item": "carrot", "qty": 2, "unit": "", "aisle": "Produce" },
+      { "item": "soy sauce", "qty": 4, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "garlic", "qty": 3, "unit": "clove", "aisle": "Produce" },
+      { "item": "fresh ginger", "qty": 1, "unit": "tbsp", "aisle": "Produce" },
+      { "item": "jasmine rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+    ],
+    "steps": [
+      "Cook rice. Slice all vegetables.",
+      "Sear beef in a hot wok 2 minutes, remove.",
+      "Stir-fry vegetables 4 minutes, add garlic and ginger.",
+      "Return beef, add soy sauce, toss 1 minute, serve over rice."
+    ]
+  },
+  {
+    "id": "mediterranean-grain-bowl",
+    "title": "Mediterranean Grain Bowl",
+    "meal": ["lunch"],
+    "servings": 4,
+    "tags": ["vegetarian", "meal-prep", "high-fiber"],
+    "prepTime": 20,
+    "cookTime": 20,
+    "ingredients": [
+      { "item": "quinoa", "qty": 250, "unit": "g", "aisle": "Pantry" },
+      { "item": "cucumber", "qty": 1, "unit": "", "aisle": "Produce" },
+      { "item": "cherry tomatoes", "qty": 200, "unit": "g", "aisle": "Produce" },
+      { "item": "red onion", "qty": 0.5, "unit": "", "aisle": "Produce" },
+      { "item": "feta cheese", "qty": 150, "unit": "g", "aisle": "Dairy & Eggs" },
+      { "item": "chickpeas", "qty": 1, "unit": "can", "aisle": "Pantry" },
+      { "item": "lemon", "qty": 1, "unit": "", "aisle": "Produce" },
+      { "item": "olive oil", "qty": 3, "unit": "tbsp", "aisle": "Pantry" }
+    ],
+    "steps": [
+      "Cook quinoa and cool.",
+      "Dice cucumber, tomatoes and red onion.",
+      "Combine with chickpeas and crumbled feta.",
+      "Dress with lemon juice, olive oil, salt and pepper. Keeps 4 days."
+    ]
+  },
+  {
+    "id": "miso-salmon",
+    "title": "Miso-Glazed Salmon",
+    "meal": ["dinner"],
+    "servings": 4,
+    "tags": ["high-protein", "gluten-free", "quick"],
+    "prepTime": 10,
+    "cookTime": 15,
+    "ingredients": [
+      { "item": "salmon fillet", "qty": 4, "unit": "", "aisle": "Meat & Seafood" },
+      { "item": "white miso paste", "qty": 3, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "honey", "qty": 1, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "soy sauce", "qty": 1, "unit": "tbsp", "aisle": "Pantry" },
+      { "item": "green beans", "qty": 400, "unit": "g", "aisle": "Produce" },
+      { "item": "jasmine rice", "qty": 300, "unit": "g", "aisle": "Pantry" }
+    ],
+    "steps": [
+      "Whisk miso, honey and soy. Brush over salmon.",
+      "Bake at 200C / 400F for 12-15 minutes.",
+      "Steam green beans, serve with rice."
+    ]
+  }
+]
