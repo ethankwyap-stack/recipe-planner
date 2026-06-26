@@ -7,6 +7,22 @@ export interface RepoConfig {
   branch: string // e.g. "main"
   path: string // e.g. "public/data/recipes.json"
   token: string // fine-grained PAT with Contents: write — stays in this browser only
+  autoPublish?: boolean // commit changes automatically (default true once token is set)
+}
+
+/** Best-effort guess of owner/repo from a GitHub Pages URL like
+ *  https://user.github.io/repo/ — pre-fills setup so the user only pastes a token. */
+export function guessRepoFromUrl(): { owner: string; repo: string } {
+  try {
+    const m = location.hostname.match(/^([^.]+)\.github\.io$/)
+    const owner = m ? m[1] : ''
+    const seg = location.pathname.split('/').filter(Boolean)[0] ?? ''
+    // On a project page the first path segment is the repo; on a user root page it isn't.
+    const repo = owner && seg && !location.hostname.startsWith(seg) ? seg : ''
+    return { owner, repo }
+  } catch {
+    return { owner: '', repo: '' }
+  }
 }
 
 const CFG_KEY = 'mise.repoConfig'

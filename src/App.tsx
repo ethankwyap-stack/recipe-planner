@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Recipe, SharedPlan, WeekPlan } from './types'
 import { Library } from './pages/Library'
 import { Planner } from './pages/Planner'
@@ -12,16 +12,23 @@ import {
   readSharedPlanFromHash,
 } from './lib/share'
 import {
+  clearDraft,
   hasDraft,
   loadPlan,
   loadRecipes,
   savePlan,
   saveDraft,
 } from './lib/storage'
+import { commitRecipes, isConfigured, loadRepoConfig } from './lib/github'
 import { emptyWeek, isoDate, mondayOf } from './lib/week'
 import { loadFavorites, saveFavorites } from './lib/favorites'
 
 type Tab = 'planner' | 'library' | 'cook'
+type PublishState =
+  | { kind: 'idle' }
+  | { kind: 'publishing' }
+  | { kind: 'published' }
+  | { kind: 'error'; msg: string }
 
 export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -35,6 +42,35 @@ export default function App() {
   const [sharing, setSharing] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [favorites, setFavorites] = useState<Set<string>>(() => loadFavorites())
+  const [publish, setPublish] = useState<PublishState>({ kind: 'idle' })
+
+  // Auto-publish: after a one-time token setup, recipe changes commit themselves
+  // to recipes.json (debounced so rapid edits become one commit). Latest list is
+  // kept in a ref so the delayed commit always sends the newest data.
+  const pendingRecipes = useRef<Recipe[]>([])
+  const publishTimer = useRef<number | undefined>(undefined)
+
+  const runPublish = async () => {
+    const cfg = loadRepoConfig()
+    if (!isConfigured(cfg) || cfg.autoPublish === false) return
+    setPublish({ kind: 'publishing' })
+    try {
+      await commitRecipes(cfg, pendingRecipes.current)
+      clearDraft()
+      setDraft(false)
+      setPublish({ kind: 'published' })
+      window.setTimeout(() => setPublish((p) => (p.kind === 'published' ? { kind: 'idle' } : p)), 3000)
+    } catch (e) {
+      setPublish({ kind: 'error', msg: e instanceof Error ? e.message : 'Publish failed' })
+    }
+  }
+
+  const schedulePublish = () => {
+    const cfg = loadRepoConfig()
+    if (!isConfigured(cfg) || cfg.autoPublish === false) return
+    window.clearTimeout(publishTimer.current)
+    publishTimer.current = window.setTimeout(runPublish, 1500)
+  }
 
   const toggleFavorite = (id: string) =>
     setFavorites((cur) => {
@@ -59,11 +95,14 @@ export default function App() {
     savePlan(w)
   }
 
-  // Persist recipe edits as a local draft so nothing is lost before publishing.
+  // Persist recipe edits as a local draft (so nothing is lost), then auto-publish
+  // to the live site if a token is configured.
   const commitLocal = (next: Recipe[]) => {
     setRecipes(next)
     saveDraft(next)
     setDraft(true)
+    pendingRecipes.current = next
+    schedulePublish()
   }
 
   const saveRecipe = (r: Recipe) =>
@@ -82,7 +121,21 @@ export default function App() {
     commitLocal([...map.values()])
   }
 
-  const onSettingsCommitted = () => setDraft(false)
+  const onSettingsCommitted = () => {
+    setDraft(false)
+    setPublish({ kind: 'published' })
+    window.setTimeout(() => setPublish((p) => (p.kind === 'published' ? { kind: 'idle' } : p)), 3000)
+  }
+
+  // Closing settings: if a token is now configured and a draft is still pending,
+  // push it up automatically so the user never has to think about publishing.
+  const closeSettings = () => {
+    setSettingsOpen(false)
+    if (draft) {
+      pendingRecipes.current = recipes
+      schedulePublish()
+    }
+  }
 
   const saveSharedCopy = () => {
     if (!shared) return
@@ -137,13 +190,14 @@ export default function App() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          {draft && (
-            <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs text-accent">
-              Unpublished changes
-            </span>
-          )}
+          <PublishIndicator
+            publish={publish}
+            draft={draft}
+            onOpenSettings={() => setSettingsOpen(true)}
+            onRetry={runPublish}
+          />
           <Button variant="ghost" onClick={() => setSettingsOpen(true)}>
-            Publish
+            ⚙ Publish settings
           </Button>
         </div>
       </header>
@@ -174,7 +228,7 @@ export default function App() {
       <ShareModal open={sharing} onClose={() => setSharing(false)} week={week} recipes={recipes} />
       <SettingsModal
         open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
+        onClose={closeSettings}
         recipes={recipes}
         onCommitted={onSettingsCommitted}
       />
@@ -184,4 +238,50 @@ export default function App() {
       </footer>
     </div>
   )
+}
+
+function PublishIndicator({
+  publish,
+  draft,
+  onOpenSettings,
+  onRetry,
+}: {
+  publish: PublishState
+  draft: boolean
+  onOpenSettings: () => void
+  onRetry: () => void
+}) {
+  const cfg = loadRepoConfig()
+  const autoOn = isConfigured(cfg) && cfg.autoPublish !== false
+  const pill = 'rounded-full px-2.5 py-1 text-xs'
+
+  if (publish.kind === 'publishing')
+    return <span className={`${pill} bg-neon/15 text-neon`}>⏳ Publishing…</span>
+
+  if (publish.kind === 'published')
+    return <span className={`${pill} bg-neon/15 text-neon`}>✓ Published — live</span>
+
+  if (publish.kind === 'error')
+    return (
+      <button
+        className={`${pill} bg-red-500/15 text-red-300 hover:bg-red-500/25`}
+        onClick={onRetry}
+        title={publish.msg}
+      >
+        ⚠ Publish failed — retry
+      </button>
+    )
+
+  // idle
+  if (autoOn && !draft)
+    return <span className={`${pill} bg-neon/10 text-neon`}>● Auto-publish on</span>
+
+  if (draft)
+    return (
+      <button className={`${pill} bg-accent/15 text-accent hover:bg-accent/25`} onClick={onOpenSettings}>
+        {autoOn ? 'Unpublished changes' : 'Saved locally · turn on auto-publish'}
+      </button>
+    )
+
+  return null
 }
