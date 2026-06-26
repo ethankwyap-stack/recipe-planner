@@ -6,6 +6,7 @@ import { Cook } from './pages/Cook'
 import { SharedPlanView } from './pages/SharedPlanView'
 import { ShareModal } from './components/ShareModal'
 import { SettingsModal } from './components/SettingsModal'
+import { HelpModal } from './components/HelpModal'
 import { Button } from './components/ui'
 import {
   clearShareHash,
@@ -41,7 +42,14 @@ export default function App() {
   })
   const [sharing, setSharing] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  // Auto-open the guide for first-time visitors (once per browser).
+  const [helpOpen, setHelpOpen] = useState(() => !localStorage.getItem('mise.seenHelp'))
   const [favorites, setFavorites] = useState<Set<string>>(() => loadFavorites())
+
+  const closeHelp = () => {
+    localStorage.setItem('mise.seenHelp', '1')
+    setHelpOpen(false)
+  }
   const [publish, setPublish] = useState<PublishState>({ kind: 'idle' })
 
   // Auto-publish: after a one-time token setup, recipe changes commit themselves
@@ -196,6 +204,9 @@ export default function App() {
             onOpenSettings={() => setSettingsOpen(true)}
             onRetry={runPublish}
           />
+          <Button variant="ghost" onClick={() => setHelpOpen(true)}>
+            ❓ Help
+          </Button>
           <Button variant="ghost" onClick={() => setSettingsOpen(true)}>
             ⚙ Publish settings
           </Button>
@@ -225,6 +236,7 @@ export default function App() {
         />
       )}
 
+      <HelpModal open={helpOpen} onClose={closeHelp} />
       <ShareModal open={sharing} onClose={() => setSharing(false)} week={week} recipes={recipes} />
       <SettingsModal
         open={settingsOpen}
