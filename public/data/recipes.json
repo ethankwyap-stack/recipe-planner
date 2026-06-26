@@ -400,5 +400,974 @@
       "Bake at 200C / 400F for 12-15 minutes.",
       "Steam green beans, serve with rice."
     ]
+  },
+  {
+    "id": "turkey-black-bean-tacos",
+    "title": "Turkey & Black Bean Tacos",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "high-protein",
+      "quick"
+    ],
+    "prepTime": 10,
+    "cookTime": 15,
+    "ingredients": [
+      {
+        "item": "ground turkey",
+        "qty": 500,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "black beans",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "taco seasoning",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "corn tortillas",
+        "qty": 8,
+        "unit": "",
+        "aisle": "Bakery"
+      },
+      {
+        "item": "cheddar cheese",
+        "qty": 100,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "lettuce",
+        "qty": 0.5,
+        "unit": "head",
+        "aisle": "Produce"
+      },
+      {
+        "item": "tomato",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "lime",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      }
+    ],
+    "steps": [
+      "Brown the turkey in a pan, 6-8 minutes.",
+      "Add taco seasoning and drained black beans, cook 4 minutes.",
+      "Warm the tortillas.",
+      "Fill with turkey, shredded lettuce, diced tomato, cheese and a squeeze of lime."
+    ]
+  },
+  {
+    "id": "lentil-bolognese",
+    "title": "Lentil Bolognese",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegan",
+      "vegetarian",
+      "comfort",
+      "high-fiber"
+    ],
+    "prepTime": 10,
+    "cookTime": 30,
+    "ingredients": [
+      {
+        "item": "brown lentils",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "chopped tomatoes",
+        "qty": 2,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "onion",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "carrot",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "celery",
+        "qty": 2,
+        "unit": "stick",
+        "aisle": "Produce"
+      },
+      {
+        "item": "garlic",
+        "qty": 3,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "tomato paste",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "spaghetti",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Finely dice onion, carrot and celery; soften in oil 8 minutes.",
+      "Add garlic and tomato paste, stir 1 minute.",
+      "Add lentils, chopped tomatoes and a cup of water. Simmer 25 minutes until lentils are tender.",
+      "Cook spaghetti and serve topped with the sauce."
+    ],
+    "notes": "Even better the next day."
+  },
+  {
+    "id": "thai-green-curry-chicken",
+    "title": "Thai Green Curry Chicken",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "gluten-free",
+      "high-protein"
+    ],
+    "prepTime": 15,
+    "cookTime": 20,
+    "ingredients": [
+      {
+        "item": "chicken breast",
+        "qty": 600,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "green curry paste",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "coconut milk",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "bell pepper",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "green beans",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "fish sauce",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "jasmine rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "fresh basil",
+        "qty": 1,
+        "unit": "bunch",
+        "aisle": "Produce"
+      }
+    ],
+    "steps": [
+      "Fry curry paste in a little oil 1 minute.",
+      "Add sliced chicken, sear 4 minutes.",
+      "Pour in coconut milk, peppers and green beans; simmer 12 minutes.",
+      "Season with fish sauce, stir in basil, serve over rice."
+    ]
+  },
+  {
+    "id": "greek-souvlaki-bowls",
+    "title": "Greek Chicken Souvlaki Bowls",
+    "meal": [
+      "lunch",
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "high-protein",
+      "gluten-free",
+      "meal-prep"
+    ],
+    "prepTime": 20,
+    "cookTime": 15,
+    "ingredients": [
+      {
+        "item": "chicken thighs",
+        "qty": 600,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "greek yogurt",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "lemon",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "garlic",
+        "qty": 3,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "dried oregano",
+        "qty": 2,
+        "unit": "tsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "cucumber",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "cherry tomatoes",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "basmati rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Marinate diced chicken in yogurt, lemon, garlic and oregano 15 minutes.",
+      "Cook rice.",
+      "Sear chicken in a hot pan 8-10 minutes until charred and cooked.",
+      "Build bowls with rice, chicken, cucumber and tomatoes."
+    ],
+    "notes": "Holds 4 days for lunches."
+  },
+  {
+    "id": "margherita-flatbread",
+    "title": "Margherita Flatbread",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegetarian",
+      "quick"
+    ],
+    "prepTime": 10,
+    "cookTime": 12,
+    "ingredients": [
+      {
+        "item": "flatbread",
+        "qty": 4,
+        "unit": "",
+        "aisle": "Bakery"
+      },
+      {
+        "item": "passata",
+        "qty": 200,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "fresh mozzarella",
+        "qty": 250,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "fresh basil",
+        "qty": 1,
+        "unit": "bunch",
+        "aisle": "Produce"
+      },
+      {
+        "item": "olive oil",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "garlic",
+        "qty": 1,
+        "unit": "clove",
+        "aisle": "Produce"
+      }
+    ],
+    "steps": [
+      "Heat oven to 230C / 450F.",
+      "Spread passata mixed with crushed garlic over each flatbread.",
+      "Top with torn mozzarella.",
+      "Bake 10-12 minutes, finish with fresh basil and a drizzle of oil."
+    ]
+  },
+  {
+    "id": "shrimp-garlic-pasta",
+    "title": "Garlic Butter Shrimp Pasta",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "prepTime": 10,
+    "cookTime": 15,
+    "ingredients": [
+      {
+        "item": "shrimp",
+        "qty": 500,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "linguine",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "butter",
+        "qty": 60,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "garlic",
+        "qty": 4,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "chilli flakes",
+        "qty": 1,
+        "unit": "tsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "lemon",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "parsley",
+        "qty": 1,
+        "unit": "bunch",
+        "aisle": "Produce"
+      }
+    ],
+    "steps": [
+      "Cook linguine until al dente.",
+      "Melt butter, fry garlic and chilli flakes 1 minute.",
+      "Add shrimp, cook 3-4 minutes until pink.",
+      "Toss with pasta, lemon juice and parsley."
+    ]
+  },
+  {
+    "id": "egg-fried-rice",
+    "title": "Veggie Egg Fried Rice",
+    "meal": [
+      "lunch",
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegetarian",
+      "quick",
+      "budget"
+    ],
+    "prepTime": 10,
+    "cookTime": 12,
+    "ingredients": [
+      {
+        "item": "cooked rice",
+        "qty": 600,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "eggs",
+        "qty": 4,
+        "unit": "",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "frozen peas",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Frozen"
+      },
+      {
+        "item": "carrot",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "spring onion",
+        "qty": 4,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "soy sauce",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "sesame oil",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "garlic",
+        "qty": 2,
+        "unit": "clove",
+        "aisle": "Produce"
+      }
+    ],
+    "steps": [
+      "Scramble eggs in a hot wok, set aside.",
+      "Stir-fry diced carrot, peas and garlic 4 minutes.",
+      "Add cold cooked rice, fry 4 minutes.",
+      "Return eggs, add soy and sesame oil, finish with spring onion."
+    ],
+    "notes": "Best with day-old rice."
+  },
+  {
+    "id": "tuna-avocado-salad",
+    "title": "Tuna Avocado Salad",
+    "meal": [
+      "lunch"
+    ],
+    "servings": 2,
+    "tags": [
+      "high-protein",
+      "gluten-free",
+      "no-cook"
+    ],
+    "prepTime": 10,
+    "cookTime": 0,
+    "ingredients": [
+      {
+        "item": "canned tuna",
+        "qty": 2,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "avocado",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "sweetcorn",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "red onion",
+        "qty": 0.5,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "cherry tomatoes",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "lemon",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "olive oil",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Drain tuna and sweetcorn.",
+      "Dice avocado, tomatoes and red onion.",
+      "Toss everything with lemon juice, oil, salt and pepper."
+    ]
+  },
+  {
+    "id": "butternut-squash-soup",
+    "title": "Butternut Squash Soup",
+    "meal": [
+      "lunch"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegan",
+      "vegetarian",
+      "gluten-free",
+      "comfort"
+    ],
+    "prepTime": 15,
+    "cookTime": 30,
+    "ingredients": [
+      {
+        "item": "butternut squash",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "onion",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "garlic",
+        "qty": 2,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "vegetable stock",
+        "qty": 1,
+        "unit": "l",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "coconut milk",
+        "qty": 0.5,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "cumin",
+        "qty": 1,
+        "unit": "tsp",
+        "aisle": "Spices"
+      }
+    ],
+    "steps": [
+      "Soften onion and garlic in a pot.",
+      "Add cubed squash, cumin and stock; simmer 25 minutes.",
+      "Blend until smooth, stir in coconut milk, season."
+    ]
+  },
+  {
+    "id": "teriyaki-tofu-stirfry",
+    "title": "Teriyaki Tofu Stir-Fry",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegan",
+      "vegetarian",
+      "high-protein"
+    ],
+    "prepTime": 15,
+    "cookTime": 15,
+    "ingredients": [
+      {
+        "item": "firm tofu",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "teriyaki sauce",
+        "qty": 4,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "broccoli",
+        "qty": 1,
+        "unit": "head",
+        "aisle": "Produce"
+      },
+      {
+        "item": "bell pepper",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "cornstarch",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "jasmine rice",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "sesame seeds",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Press and cube tofu, toss in cornstarch.",
+      "Fry tofu until golden, set aside.",
+      "Stir-fry broccoli and pepper 5 minutes.",
+      "Return tofu, add teriyaki sauce, toss; serve over rice with sesame seeds."
+    ]
+  },
+  {
+    "id": "chicken-caesar-wrap",
+    "title": "Chicken Caesar Wrap",
+    "meal": [
+      "lunch"
+    ],
+    "servings": 2,
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "prepTime": 10,
+    "cookTime": 10,
+    "ingredients": [
+      {
+        "item": "chicken breast",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "tortilla wraps",
+        "qty": 2,
+        "unit": "",
+        "aisle": "Bakery"
+      },
+      {
+        "item": "romaine lettuce",
+        "qty": 0.5,
+        "unit": "head",
+        "aisle": "Produce"
+      },
+      {
+        "item": "caesar dressing",
+        "qty": 3,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "parmesan",
+        "qty": 30,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "croutons",
+        "qty": 30,
+        "unit": "g",
+        "aisle": "Bakery"
+      }
+    ],
+    "steps": [
+      "Season and pan-fry chicken 8 minutes, slice.",
+      "Toss lettuce with dressing, parmesan and croutons.",
+      "Fill wraps with chicken and salad, roll up."
+    ]
+  },
+  {
+    "id": "beef-chili-con-carne",
+    "title": "Beef Chili con Carne",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 6,
+    "tags": [
+      "high-protein",
+      "gluten-free",
+      "comfort",
+      "meal-prep"
+    ],
+    "prepTime": 15,
+    "cookTime": 40,
+    "ingredients": [
+      {
+        "item": "ground beef",
+        "qty": 700,
+        "unit": "g",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "kidney beans",
+        "qty": 2,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "chopped tomatoes",
+        "qty": 2,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "onion",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "garlic",
+        "qty": 3,
+        "unit": "clove",
+        "aisle": "Produce"
+      },
+      {
+        "item": "chilli powder",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "cumin",
+        "qty": 1,
+        "unit": "tbsp",
+        "aisle": "Spices"
+      },
+      {
+        "item": "basmati rice",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Brown beef with onion and garlic.",
+      "Stir in chilli powder and cumin 1 minute.",
+      "Add tomatoes and beans; simmer 35 minutes.",
+      "Serve over rice."
+    ],
+    "notes": "Freezes well for up to 3 months."
+  },
+  {
+    "id": "pesto-tomato-pasta",
+    "title": "Pesto Pasta with Cherry Tomatoes",
+    "meal": [
+      "lunch",
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegetarian",
+      "quick"
+    ],
+    "prepTime": 5,
+    "cookTime": 12,
+    "ingredients": [
+      {
+        "item": "penne pasta",
+        "qty": 400,
+        "unit": "g",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "basil pesto",
+        "qty": 6,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "cherry tomatoes",
+        "qty": 250,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "parmesan",
+        "qty": 50,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "pine nuts",
+        "qty": 30,
+        "unit": "g",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Cook pasta, reserving a splash of water.",
+      "Halve tomatoes.",
+      "Toss pasta with pesto, tomatoes and a little pasta water.",
+      "Top with parmesan and toasted pine nuts."
+    ]
+  },
+  {
+    "id": "black-bean-quesadillas",
+    "title": "Black Bean Quesadillas",
+    "meal": [
+      "lunch"
+    ],
+    "servings": 4,
+    "tags": [
+      "vegetarian",
+      "quick",
+      "budget"
+    ],
+    "prepTime": 10,
+    "cookTime": 12,
+    "ingredients": [
+      {
+        "item": "flour tortillas",
+        "qty": 8,
+        "unit": "",
+        "aisle": "Bakery"
+      },
+      {
+        "item": "black beans",
+        "qty": 1,
+        "unit": "can",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "cheddar cheese",
+        "qty": 150,
+        "unit": "g",
+        "aisle": "Dairy & Eggs"
+      },
+      {
+        "item": "bell pepper",
+        "qty": 1,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "red onion",
+        "qty": 0.5,
+        "unit": "",
+        "aisle": "Produce"
+      },
+      {
+        "item": "cumin",
+        "qty": 1,
+        "unit": "tsp",
+        "aisle": "Spices"
+      }
+    ],
+    "steps": [
+      "Mash beans lightly with cumin.",
+      "Spread over tortillas with cheese, diced pepper and onion; fold.",
+      "Toast in a dry pan 2-3 minutes each side until golden."
+    ]
+  },
+  {
+    "id": "honey-mustard-salmon-traybake",
+    "title": "Honey Mustard Salmon Traybake",
+    "meal": [
+      "dinner"
+    ],
+    "servings": 4,
+    "tags": [
+      "gluten-free",
+      "high-protein",
+      "one-pan"
+    ],
+    "prepTime": 10,
+    "cookTime": 25,
+    "ingredients": [
+      {
+        "item": "salmon fillet",
+        "qty": 4,
+        "unit": "",
+        "aisle": "Meat & Seafood"
+      },
+      {
+        "item": "baby potatoes",
+        "qty": 600,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "asparagus",
+        "qty": 300,
+        "unit": "g",
+        "aisle": "Produce"
+      },
+      {
+        "item": "honey",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "dijon mustard",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      },
+      {
+        "item": "olive oil",
+        "qty": 2,
+        "unit": "tbsp",
+        "aisle": "Pantry"
+      }
+    ],
+    "steps": [
+      "Roast halved potatoes in oil at 200C / 400F for 15 minutes.",
+      "Add salmon and asparagus to the tray.",
+      "Brush salmon with honey-mustard mix.",
+      "Roast a further 12 minutes until salmon flakes."
+    ]
   }
 ]
