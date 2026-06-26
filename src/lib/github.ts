@@ -30,7 +30,16 @@ const CFG_KEY = 'mise.repoConfig'
 export function loadRepoConfig(): RepoConfig | null {
   try {
     const raw = localStorage.getItem(CFG_KEY)
-    return raw ? (JSON.parse(raw) as RepoConfig) : null
+    if (!raw) return null
+    const cfg = JSON.parse(raw) as RepoConfig
+    // Backfill owner/repo from the site URL if they were left blank, so a token
+    // saved without them still works for auto-publish.
+    if (!cfg.owner || !cfg.repo) {
+      const g = guessRepoFromUrl()
+      cfg.owner = cfg.owner || g.owner
+      cfg.repo = cfg.repo || g.repo
+    }
+    return cfg
   } catch {
     return null
   }
