@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Aisle, Ingredient, MealType, Recipe } from '../types'
 import { AISLES, recipePhotos } from '../types'
-import { guessAisle, uniqueId } from '../lib/parse'
+import { guessAisle, parseIngredientLine, uniqueId } from '../lib/parse'
 import { fileToStoredPhoto } from '../lib/image'
 import { Button, Field, inputClass } from './ui'
 
@@ -42,6 +42,26 @@ export function RecipeForm({
 
   const setIng = (i: number, patch: Partial<Ingredient>) =>
     setIngredients((cur) => cur.map((ing, idx) => (idx === i ? { ...ing, ...patch } : ing)))
+
+  // Paste a whole list at once: one ingredient/step per line. Empty placeholder
+  // rows are dropped so a fresh form doesn't keep a blank first entry.
+  const addIngredientsBulk = (text: string) => {
+    const parsed = text
+      .split('\n')
+      .map(parseIngredientLine)
+      .filter((x): x is Ingredient => !!x && !!x.item)
+    if (!parsed.length) return
+    setIngredients((cur) => [...cur.filter((ing) => ing.item.trim()), ...parsed])
+  }
+
+  const addStepsBulk = (text: string) => {
+    const parsed = text
+      .split('\n')
+      .map((l) => l.replace(/^[-*•\d.)\s]+/, '').trim())
+      .filter(Boolean)
+    if (!parsed.length) return
+    setSteps((cur) => [...cur.filter((s) => s.trim()), ...parsed])
+  }
 
   const canSave = title.trim().length > 0 && meal.length > 0
 
@@ -184,13 +204,16 @@ export function RecipeForm({
             </div>
           ))}
         </div>
-        <Button
-          variant="ghost"
-          className="mt-2"
-          onClick={() => setIngredients((cur) => [...cur, emptyIngredient()])}
-        >
-          + Add ingredient
-        </Button>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button variant="ghost" onClick={() => setIngredients((cur) => [...cur, emptyIngredient()])}>
+            + Add ingredient
+          </Button>
+          <BulkAdd
+            kind="ingredients"
+            placeholder={'Paste one ingredient per line, e.g.\n2 cups flour\n1 tsp salt\n3 eggs'}
+            onAdd={addIngredientsBulk}
+          />
+        </div>
         <PhotoAttach label="ingredients" photos={ingredientsPhotos} onChange={setIngredientsPhotos} />
       </div>
 
@@ -221,9 +244,16 @@ export function RecipeForm({
             </div>
           ))}
         </div>
-        <Button variant="ghost" className="mt-2" onClick={() => setSteps((cur) => [...cur, ''])}>
-          + Add step
-        </Button>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button variant="ghost" onClick={() => setSteps((cur) => [...cur, ''])}>
+            + Add step
+          </Button>
+          <BulkAdd
+            kind="steps"
+            placeholder={'Paste one step per line. Numbers/bullets are stripped automatically.'}
+            onAdd={addStepsBulk}
+          />
+        </div>
         <PhotoAttach label="instructions" photos={instructionsPhotos} onChange={setInstructionsPhotos} />
       </div>
 
@@ -248,6 +278,60 @@ export function RecipeForm({
         </Button>
         <Button variant="primary" disabled={!canSave} onClick={handleSave}>
           Save recipe
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Toggle a textarea to paste a whole ingredient/step list at once, parsed line-by-line.
+function BulkAdd({
+  kind,
+  placeholder,
+  onAdd,
+}: {
+  kind: 'ingredients' | 'steps'
+  placeholder: string
+  onAdd: (text: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
+
+  if (!open) {
+    return (
+      <Button variant="ghost" onClick={() => setOpen(true)}>
+        📋 Paste {kind}
+      </Button>
+    )
+  }
+
+  const submit = () => {
+    onAdd(text)
+    setText('')
+    setOpen(false)
+  }
+
+  return (
+    <div className="w-full rounded-lg border border-border bg-surface-2 p-2">
+      <textarea
+        className={`${inputClass} min-h-[110px] font-mono text-xs`}
+        autoFocus
+        placeholder={placeholder}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <div className="mt-2 flex gap-2">
+        <Button variant="primary" disabled={!text.trim()} onClick={submit}>
+          Add to list
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setText('')
+            setOpen(false)
+          }}
+        >
+          Cancel
         </Button>
       </div>
     </div>
