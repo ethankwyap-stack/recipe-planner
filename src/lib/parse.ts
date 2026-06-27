@@ -36,13 +36,28 @@ export function guessAisle(item: string): Aisle {
   return 'Other'
 }
 
+// Longer / plural forms must precede their singular so the regex consumes the whole unit.
 const UNIT_WORDS =
-  'g|kg|ml|l|oz|lb|cup|cups|tbsp|tsp|clove|cloves|can|cans|head|heads|bunch|slice|slices|stick|sticks|pinch|handful'
+  'tablespoons|tablespoon|teaspoons|teaspoon|tbsps|tbsp|tsps|tsp|cups|cup|ounces|ounce|pounds|pound|grams|gram|kilograms|kilogram|kg|g|ml|liters|litre|l|cloves|clove|cans|can|heads|head|bunches|bunch|slices|slice|sticks|stick|packages|package|pkg|cartons|carton|jars|jar|pinch|handful|oz|lbs|lb'
+
+// Unicode "vulgar fraction" characters → decimal, so "1½ cups" reads as 1.5 cups.
+const VULGAR_FRACTIONS: Record<string, number> = {
+  '½': 0.5, '⅓': 1 / 3, '⅔': 2 / 3, '¼': 0.25, '¾': 0.75,
+  '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8, '⅙': 1 / 6, '⅚': 5 / 6,
+  '⅛': 0.125, '⅜': 0.375, '⅝': 0.625, '⅞': 0.875,
+}
+
+function normalizeFractions(s: string): string {
+  return s.replace(/(\d+)?\s*([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞])/g, (_, whole, frac) => {
+    const val = (whole ? parseInt(whole, 10) : 0) + VULGAR_FRACTIONS[frac]
+    return String(Math.round(val * 1000) / 1000)
+  })
+}
 
 /** Parse a single ingredient line like "2 cups flour" or "1 onion, diced". */
 export function parseIngredientLine(line: string): Ingredient | null {
   // Strip only leading bullet markers/whitespace — NOT digits, which are the quantity.
-  const text = line.replace(/^[-*•]\s*/, '').trim()
+  const text = normalizeFractions(line.replace(/^[-*•]\s*/, '').trim())
   if (!text) return null
   // qty unit item
   const re = new RegExp(`^(\\d+(?:[.,/]\\d+)?)\\s*(${UNIT_WORDS})?\\s+(.*)$`, 'i')

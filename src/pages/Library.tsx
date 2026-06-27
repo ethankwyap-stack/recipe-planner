@@ -5,6 +5,7 @@ import { RecipeDetail } from '../components/RecipeDetail'
 import { RecipeForm } from '../components/RecipeForm'
 import { ImportModal } from '../components/ImportModal'
 import { PhotoImportModal } from '../components/PhotoImportModal'
+import { UrlImportModal } from '../components/UrlImportModal'
 import { Badge, Button, Modal } from '../components/ui'
 
 export function Library({
@@ -31,6 +32,7 @@ export function Library({
   const [adding, setAdding] = useState(false)
   const [importing, setImporting] = useState(false)
   const [photoOpen, setPhotoOpen] = useState(false)
+  const [urlOpen, setUrlOpen] = useState(false)
   const [prefill, setPrefill] = useState<Recipe | null>(null)
 
   const allTags = useMemo(() => {
@@ -68,6 +70,9 @@ export function Library({
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+        <Button variant="ghost" onClick={() => setUrlOpen(true)}>
+          🔗 From website
+        </Button>
         <Button variant="ghost" onClick={() => setPhotoOpen(true)}>
           📷 From photo
         </Button>
@@ -171,6 +176,17 @@ export function Library({
         onClose={() => setImporting(false)}
         existing={recipes}
         onImport={onImport}
+      />
+
+      {/* Website URL → JSON-LD recipe, then review in the form before saving */}
+      <UrlImportModal
+        open={urlOpen}
+        onClose={() => setUrlOpen(false)}
+        existing={recipes}
+        onParsed={(r) => {
+          setUrlOpen(false)
+          setPrefill(r)
+        }}
       />
 
       {/* Photo → OCR → best-effort recipe, then review in the form before saving */}
