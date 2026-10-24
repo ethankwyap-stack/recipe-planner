@@ -7,6 +7,7 @@ import { SharedPlanView } from './pages/SharedPlanView'
 import { ShareModal } from './components/ShareModal'
 import { SettingsModal } from './components/SettingsModal'
 import { HelpModal } from './components/HelpModal'
+import { BackupReminder } from './components/BackupReminder'
 import { Button } from './components/ui'
 import {
   clearShareHash,
@@ -19,10 +20,15 @@ import {
   loadRecipes,
   savePlan,
   saveDraft,
+  getBackupReminderAge,
+  setBackupReminderDismissed,
 } from './lib/storage'
 import { commitRecipes, isConfigured, loadRepoConfig } from './lib/github'
 import { emptyWeek, isoDate, mondayOf } from './lib/week'
 import { loadFavorites, saveFavorites } from './lib/favorites'
+
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
 
 type Tab = 'planner' | 'library' | 'cook'
 type PublishState =
@@ -51,6 +57,19 @@ export default function App() {
     setHelpOpen(false)
   }
   const [publish, setPublish] = useState<PublishState>({ kind: 'idle' })
+  const [showBackupReminder, setShowBackupReminder] = useState(false)
+
+  const checkBackupReminder = () => {
+    if (!isSafari) return
+    if (!hasDraft()) return
+    const age = getBackupReminderAge()
+    if (age === null || age > SEVEN_DAYS) setShowBackupReminder(true)
+  }
+
+  const dismissBackupReminder = () => {
+    setBackupReminderDismissed()
+    setShowBackupReminder(false)
+  }
 
   // Auto-publish: after a one-time token setup, recipe changes commit themselves
   // to recipes.json (debounced so rapid edits become one commit). Latest list is
@@ -95,7 +114,10 @@ export default function App() {
     loadRecipes()
       .then(({ recipes }) => setRecipes(recipes))
       .catch(() => setRecipes([]))
-      .finally(() => setLoaded(true))
+      .finally(() => {
+        setLoaded(true)
+        checkBackupReminder()
+      })
   }, [])
 
   const setWeek = (w: WeekPlan) => {
@@ -111,6 +133,7 @@ export default function App() {
     setDraft(true)
     pendingRecipes.current = next
     schedulePublish()
+    checkBackupReminder()
   }
 
   const saveRecipe = (r: Recipe) =>
@@ -248,6 +271,10 @@ export default function App() {
       <footer className="mt-12 border-t border-border pt-4 text-center text-xs text-muted no-print">
         Mise — your recipes live inside this site. Free, no accounts, share by link.
       </footer>
+
+      {showBackupReminder && (
+        <BackupReminder recipes={recipes} onDismiss={dismissBackupReminder} />
+      )}
     </div>
   )
 }

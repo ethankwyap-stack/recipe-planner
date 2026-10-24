@@ -79,6 +79,18 @@ export function pushRecentIds(ids: string[]): void {
   localStorage.setItem(RECENT_KEY, JSON.stringify(merged))
 }
 
+const BACKUP_REMINDER_KEY = 'mise.backupReminderDismissed'
+
+export function getBackupReminderAge(): number | null {
+  const raw = localStorage.getItem(BACKUP_REMINDER_KEY)
+  if (!raw) return null
+  return Date.now() - parseInt(raw, 10)
+}
+
+export function setBackupReminderDismissed(): void {
+  localStorage.setItem(BACKUP_REMINDER_KEY, String(Date.now()))
+}
+
 /** Download the recipe collection as a file the owner can drop into the repo. */
 export function exportRecipesFile(recipes: Recipe[]): void {
   const blob = new Blob([JSON.stringify(recipes, null, 2) + '\n'], { type: 'application/json' })
